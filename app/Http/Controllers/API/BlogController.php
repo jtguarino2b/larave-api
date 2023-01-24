@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\BlogsResource;
 use Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class BlogController extends BaseController
 {
@@ -58,13 +59,16 @@ class BlogController extends BaseController
      */
     public function show($users_id)
     {
-        $blog = Blogs::find($users_id);
+        $blog = DB::table('blogs')
+        ->where(['users_id' => $users_id])
+        ->get();
+        // var_dump($blog); die;
   
         if (is_null($blog)) {
             return $this->sendError('Article not found.');
         }
    
-        return $this->sendResponse(new BlogsResource($blog), 'Article retrieved successfully.');
+        return $this->sendResponse($blog, 'Article retrieved successfully.');
     }
     
     /**
